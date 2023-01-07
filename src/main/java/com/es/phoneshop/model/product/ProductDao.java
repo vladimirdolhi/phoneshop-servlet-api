@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ProductDao {
     Product getProduct(Long id) throws ProductDaoException;
-    List<Product> findProducts();
+    List<Product> findProducts(String query, SortField sortField, SortOrder sortOrder);
     void save(Product product) throws ProductDaoException;
     void delete(Long id) throws ProductDaoException;
 }
