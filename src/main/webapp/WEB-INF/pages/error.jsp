@@ -8,4 +8,8 @@
     Sorry, something went wrong
   </h1>
 
+  <p>
+    ${pageContext.exception}
+  </p>
+
 </tags:master>

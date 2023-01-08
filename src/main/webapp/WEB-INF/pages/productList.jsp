@@ -38,8 +38,29 @@
           <a href="${pageContext.servletContext.contextPath}/products/${product.id}">
           ${product.description}
         </td>
-        <td class="price">
+        <%--<td class="price">
+          <a href="${pageContext.servletContext.contextPath}/products/${product.id}/priceHistory">
           <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
+          </a>
+        </td>--%>
+        <td class="price">
+          <div>
+            <a href="#popup${product.id}">
+              <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
+            </a>
+          </div>
+          <div id="popup${product.id}" class="overlay">
+            <div class="popup">
+              <h2>Price history</h2>
+              <h1>${product.description}</h1>
+              <a class="close" href="#">&times;</a>
+              <div class="content">
+                <c:forEach var="history" items="${product.priceHistoryList}">
+                  <p>${history.date} the price was <fmt:formatNumber value="${history.price}" type="currency" currencySymbol="&#36"/></p>
+                </c:forEach>
+              </div>
+            </div>
+          </div>
         </td>
       </tr>
     </c:forEach>
