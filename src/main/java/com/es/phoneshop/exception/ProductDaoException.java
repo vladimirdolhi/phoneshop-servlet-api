@@ -1,6 +1,6 @@
 package com.es.phoneshop.exception;
 
-public class ProductDaoException extends Exception{
+public class ProductDaoException extends RuntimeException{
     public ProductDaoException() {
     }
 

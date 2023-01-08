@@ -1,6 +1,7 @@
 package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.exception.ProductDaoException;
+import com.es.phoneshop.exception.ProductNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -38,13 +39,13 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public Product getProduct(Long id) throws ProductDaoException {
+    public Product getProduct(Long id) throws ProductNotFoundException {
         readLock.lock();
         try {
             return products.stream()
                     .filter(p -> id.equals(p.getId()))
                     .findAny()
-                    .orElseThrow(() -> new ProductDaoException("Product with id " + id + " not found"));
+                    .orElseThrow(() -> new ProductNotFoundException(id, "Product with id " + id + " not found"));
         } finally {
             readLock.unlock();
         }
