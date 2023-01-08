@@ -16,6 +16,7 @@
     <thead>
       <tr>
         <td>Image</td>
+
         <td>
           Description
           <tags:sort sort="description" order="asc"/>
@@ -31,9 +32,12 @@
     <c:forEach var="product" items="${products}">
       <tr>
         <td>
-          <img class="product-tile" src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product.imageUrl}">
+          <img src="${product.imageUrl}">
         </td>
-        <td>${product.description}</td>
+        <td>
+          <a href="${pageContext.servletContext.contextPath}/products/${product.id}">
+          ${product.description}
+        </td>
         <td class="price">
           <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
         </td>
