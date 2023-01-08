@@ -132,7 +132,7 @@ public class ArrayListProductDao implements ProductDao {
                 try {
                     Product productToUpdate = getProduct(product.getId());
                     products.set(products.indexOf(productToUpdate), product);
-                } catch (ProductDaoException e){
+                } catch (ProductNotFoundException e){
                     throw new ProductDaoException("Product with id " + product.getId() + " doesn't exists");
                 }
             }
