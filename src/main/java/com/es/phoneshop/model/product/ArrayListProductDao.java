@@ -156,4 +156,9 @@ public class ArrayListProductDao implements ProductDao {
             writeLock.unlock();
         }
     }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
 }
