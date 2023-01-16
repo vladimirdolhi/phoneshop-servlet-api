@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 public class ProductDetailsPageServlet extends HttpServlet {
     private ProductDao productDao;
@@ -43,8 +45,10 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
         int quantity;
         try {
-            quantity = Integer.valueOf(quantityStr);
-        } catch (NumberFormatException ex){
+            request.getLocale();
+            NumberFormat format = NumberFormat.getInstance(request.getLocale());
+            quantity = format.parse(quantityStr).intValue();
+        } catch (ParseException ex){
             request.setAttribute("error", "Not a number");
             doGet(request, response);
             return;
