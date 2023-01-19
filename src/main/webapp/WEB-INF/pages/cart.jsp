@@ -32,6 +32,7 @@
         <td class="price">
           Price
         </td>
+        <td></td>
       </tr>
     </thead>
     <c:forEach var="item" items="${cart.items}" varStatus="status">
@@ -73,11 +74,18 @@
             </div>
           </div>
         </td>
+        <td>
+          <button form="deleteCartItem"
+                  formaction="${pageContext.servletContext.contextPath}/cart/deleteCartItem/${item.product.id}">Delete</button>
+        </td>
       </tr>
     </c:forEach>
   </table>
     <p>
       <button>Update</button>
     </p>
+  </form>
+  <form id="deleteCartItem" method="post">
+
   </form>
 </tags:master>
