@@ -58,26 +58,57 @@ public class DefaultCartService implements CartService{
         writeLock.lock();
         try {
             Product product = productDao.getProduct(productId);
-            if (product.getStock() < quantity) {
+
+            Optional<CartItem> cartItemOptional = findCartItemForUpdate(cart, productId, quantity);
+
+            int productAmount = cartItemOptional.map(CartItem::getQuantity).orElse(0);
+
+            if(product.getStock() < quantity + productAmount){
                 throw new OutOfStockException(product, quantity, product.getStock());
             }
 
-            Optional<CartItem> addedItem = cart.getItems().stream()
-                    .filter(item -> product.getId().equals(item.getProduct().getId()))
-                    .findAny();
-
-            if (addedItem.isPresent()) {
-                CartItem cartItem = addedItem.get();
-                cartItem.setQuantity(cartItem.getQuantity() + quantity);
-                cartItem.getProduct().setStock(cartItem.getProduct().getStock() - quantity);
+            if (cartItemOptional.isPresent()){
+                cartItemOptional.get().setQuantity(productAmount + quantity);
             } else {
                 cart.getItems().add(new CartItem(product, quantity));
-                product.setStock(product.getStock() - quantity);
             }
-
         } finally {
             writeLock.unlock();
         }
 
+    }
+
+    @Override
+    public void update(Cart cart, Long productId, int quantity) throws OutOfStockException {
+        writeLock.lock();
+        try {
+            Product product = productDao.getProduct(productId);
+            Optional<CartItem> cartItemOptional = findCartItemForUpdate(cart, productId, quantity);
+
+            if(product.getStock() < quantity){
+                throw new OutOfStockException(product, quantity, product.getStock());
+            }
+
+            if (cartItemOptional.isPresent()){
+                cartItemOptional.get().setQuantity(quantity);
+            } else {
+                cart.getItems().add(new CartItem(product, quantity));
+            }
+        } finally {
+            writeLock.unlock();
+        }
+
+    }
+
+    private Optional<CartItem> findCartItemForUpdate(Cart cart, Long productId, int quantity) throws OutOfStockException {
+        if(quantity <= 0){
+            throw new OutOfStockException(quantity);
+        }
+        Product product = productDao.getProduct(productId);
+        Optional<CartItem> cartItemOptional = cart.getItems().stream()
+                .filter(item -> product.getId().equals(item.getProduct().getId()))
+                .findAny();
+
+        return cartItemOptional;
     }
 }

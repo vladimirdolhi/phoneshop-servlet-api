@@ -13,6 +13,10 @@ public class OutOfStockException extends Exception{
         this.stockAvailable = stockAvailable;
     }
 
+    public OutOfStockException(int stockRequested) {
+        this.stockRequested = stockRequested;
+    }
+
     public Product getProduct() {
         return product;
     }
