@@ -5,11 +5,7 @@ import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
-import com.es.phoneshop.model.product.viewedHistory.DefaultViewedProductsService;
-import com.es.phoneshop.model.product.viewedHistory.ViewedProductsHistory;
-import com.es.phoneshop.model.product.viewedHistory.ViewedProductsService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,10 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class CartPageServlet extends HttpServlet {
+public class AddItemToCartServlet extends HttpServlet {
 
     private static final String CART_PAGE_SERVLET = "/WEB-INF/pages/cart.jsp";
     private ProductDao productDao;
@@ -35,43 +33,35 @@ public class CartPageServlet extends HttpServlet {
         productDao = ArrayListProductDao.getInstance();
         cartService = DefaultCartService.getInstance();
     }
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Cart cart = cartService.getCart(request);
-        request.setAttribute("cart", cart);
-        request.getRequestDispatcher(CART_PAGE_SERVLET).forward(request, response);
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String[] productIds =request.getParameterValues("productId");
         String[] quantities =request.getParameterValues("quantity");
+        Long productId = Long.valueOf(request.getPathInfo().substring(1));
 
         Map<Long, String> errors = new HashMap<>();
-        for (int i = 0; i < productIds.length; i++) {
-            Long productId = Long.valueOf(productIds[i]);
 
-            int quantity;
-            try {
-                quantity = getQuantity(quantities[i], request);
-                Cart cart = cartService.getCart(request);
-                cartService.update(cart, productId, quantity);
+        int index = Arrays.stream(productIds)
+                .map(Long::valueOf)
+                .collect(Collectors.toList())
+                .indexOf(productId);
 
-            } catch (ParseException | OutOfStockException e) {
-                handleError(errors, productId, e);
-            }
+        try {
+            int quantity = getQuantity(quantities[index], request);
+            Cart cart = cartService.getCart(request);
+            cartService.add(cart, productId, quantity);
 
+        } catch (ParseException | OutOfStockException e) {
+            handleError(errors, productId, e);
         }
+
         if(errors.isEmpty()){
-            response.sendRedirect(request.getContextPath() + "/cart?message=Cart updated successfully");
+            response.sendRedirect(request.getContextPath() + "/products?message=Product added successfully");
         } else {
             request.setAttribute("errors", errors);
-            doGet(request, response);
+            response.sendRedirect(request.getContextPath() + "/products?errors=" + errors.get(productId)+ "&id=" + productId);
         }
-    }
-
-    private long parseProductId(HttpServletRequest request){
-        return Long.valueOf(request.getPathInfo().substring(1));
     }
 
     private int getQuantity(String quantityString, HttpServletRequest request) throws ParseException {

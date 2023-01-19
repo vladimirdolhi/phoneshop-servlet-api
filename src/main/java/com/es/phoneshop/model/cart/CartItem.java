@@ -45,8 +45,8 @@ public class CartItem implements Serializable {
 
     @Override
     public String toString() {
-        return "CartItem{" +
-                "product=" + product.getCode() +
+        return "CartItem{" + "id=" + product.getId() +
+                ", product=" + product.getCode() +
                 ", quantity=" + quantity +
                 '}';
     }
