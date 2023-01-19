@@ -16,7 +16,7 @@
     </div>
   </c:if>
   <p>
-    Cart ${cart}
+    Cart ${cart}, total quantity ${cart.totalQuantity}
   </p>
   <form method="post" action="${pageContext.servletContext.contextPath}/cart">
   <table>
@@ -80,6 +80,12 @@
         </td>
       </tr>
     </c:forEach>
+    <tr>
+      <td></td>
+      <td></td>
+      <td>Total cost</td>
+      <td>${cart.totalCost}</td>
+    </tr>
   </table>
     <p>
       <button>Update</button>

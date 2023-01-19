@@ -6,10 +6,12 @@ import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 public class DefaultCartService implements CartService{
 
@@ -72,6 +74,8 @@ public class DefaultCartService implements CartService{
             } else {
                 cart.getItems().add(new CartItem(product, quantity));
             }
+            recalculateCart(cart);
+
         } finally {
             writeLock.unlock();
         }
@@ -94,6 +98,7 @@ public class DefaultCartService implements CartService{
             } else {
                 cart.getItems().add(new CartItem(product, quantity));
             }
+            recalculateCart(cart);
         } finally {
             writeLock.unlock();
         }
@@ -104,6 +109,15 @@ public class DefaultCartService implements CartService{
     public void delete(Cart cart, Long productId) {
         cart.getItems().removeIf(item ->
                 productId.equals(item.getProduct().getId()));
+        recalculateCart(cart);
+    }
+
+    private void recalculateCart(Cart cart){
+        cart.setTotalQuantity(cart.getItems().stream()
+                .map(CartItem::getQuantity).mapToInt(q -> q).sum());
+        cart.setTotalCost(BigDecimal.valueOf(cart.getItems().stream()
+                .mapToInt(item -> item.getQuantity() * item.getProduct().getPrice().intValueExact())
+                .sum()));
     }
 
     private Optional<CartItem> findCartItemForUpdate(Cart cart, Long productId, int quantity) throws OutOfStockException {
