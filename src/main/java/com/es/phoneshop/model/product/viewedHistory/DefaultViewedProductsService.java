@@ -5,8 +5,7 @@ import com.es.phoneshop.model.product.Product;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Deque;
-import java.util.List;
+
 
 public class DefaultViewedProductsService implements ViewedProductsService{
 

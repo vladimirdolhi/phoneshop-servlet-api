@@ -3,17 +3,12 @@ package com.es.phoneshop.model.product.viewedHistory;
 import com.es.phoneshop.model.product.Product;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.List;
+
 
 public class ViewedProductsHistory {
 
     private Deque<Product> recentlyViewedProducts;
-
-    public ViewedProductsHistory(Deque<Product> recentlyViewedProducts) {
-        this.recentlyViewedProducts = recentlyViewedProducts;
-    }
 
     public ViewedProductsHistory() {
         this.recentlyViewedProducts = new ArrayDeque<>();

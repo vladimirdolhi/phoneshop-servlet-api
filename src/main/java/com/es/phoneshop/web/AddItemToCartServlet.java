@@ -4,8 +4,7 @@ import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
-import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.ProductDao;
+
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -22,15 +21,11 @@ import java.util.stream.Collectors;
 
 public class AddItemToCartServlet extends HttpServlet {
 
-    private static final String CART_PAGE_SERVLET = "/WEB-INF/pages/cart.jsp";
-    private ProductDao productDao;
-
     private CartService cartService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        productDao = ArrayListProductDao.getInstance();
         cartService = DefaultCartService.getInstance();
     }
 
