@@ -18,6 +18,7 @@
   <main>
     <jsp:doBody/>
   </main>
+  <jsp:include page="/viewedProducts"/>
   <p>
     (c) Expert-Soft
   </p>

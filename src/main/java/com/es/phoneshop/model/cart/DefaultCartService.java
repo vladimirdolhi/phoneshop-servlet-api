@@ -31,7 +31,7 @@ public class DefaultCartService implements CartService{
     public static CartService getInstance(){
         CartService localDefaultCartService = cartService;
         if(localDefaultCartService == null){
-            synchronized (ArrayListProductDao.class){
+            synchronized (DefaultCartService.class){
                 localDefaultCartService = cartService;
                 if (localDefaultCartService == null){
                     cartService = localDefaultCartService = new DefaultCartService();

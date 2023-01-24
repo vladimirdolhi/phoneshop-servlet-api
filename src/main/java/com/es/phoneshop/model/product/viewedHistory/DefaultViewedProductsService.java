@@ -20,7 +20,7 @@ public class DefaultViewedProductsService implements ViewedProductsService{
     public static ViewedProductsService getInstance(){
         ViewedProductsService localService = service;
         if(localService == null){
-            synchronized (ArrayListProductDao.class){
+            synchronized (DefaultViewedProductsService.class){
                 localService = service;
                 if (localService == null){
                     service = localService = new DefaultViewedProductsService();
