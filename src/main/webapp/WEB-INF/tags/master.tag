@@ -13,10 +13,12 @@
       <img src="${pageContext.servletContext.contextPath}/images/logo.svg"/>
       PhoneShop
     </a>
+    <jsp:include page="/cart/minicart"/>
   </header>
   <main>
     <jsp:doBody/>
   </main>
+  <jsp:include page="/viewedProducts"/>
   <p>
     (c) Expert-Soft
   </p>

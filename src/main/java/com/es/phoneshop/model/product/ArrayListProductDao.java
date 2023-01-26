@@ -3,7 +3,6 @@ package com.es.phoneshop.model.product;
 import com.es.phoneshop.exception.ProductDaoException;
 import com.es.phoneshop.exception.ProductNotFoundException;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;

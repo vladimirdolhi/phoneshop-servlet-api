@@ -5,29 +5,57 @@
 
 <jsp:useBean id="product" type="com.es.phoneshop.model.product.Product" scope="request"/>
 <tags:master pageTitle="Product Details">
-  <p>
-    ${product.description}
-  </p>
-  <table>
-    <tr>
-      <td>Image</td>
-      <td>
-        <img src="${product.imageUrl}">
-      </td>
-    </tr>
-    <tr>
-      <td>Code</td>
-      <td>${product.code}</td>
-    </tr>
-    <tr>
-      <td>Stock</td>
-      <td>${product.stock}</td>
-    </tr>
-    <tr>
-      <td>Price</td>
-      <td>${product.price}</td>
-    </tr>
-
-  </table>
+    <p>
+        Cart ${cart}
+    </p>
+    <c:if test="${not empty param.message && empty error}">
+                    <div class="success">
+                            ${param.message}
+                    </div>
+    </c:if>
+    <c:if test="${not empty error}">
+                    <div class="error">
+                            There was an error adding to cart
+                    </div>
+    </c:if>
+    <p>
+            ${product.description}
+    </p>
+    <form method="post">
+        <table>
+            <tr>
+                <td>Image</td>
+                <td>
+                    <img src="${product.imageUrl}">
+                </td>
+            </tr>
+            <tr>
+                <td>Code</td>
+                <td>${product.code}</td>
+            </tr>
+            <tr>
+                <td>Stock</td>
+                <td>${product.stock}</td>
+            </tr>
+            <tr>
+                <td>Price</td>
+                <td class="price">
+                    <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>Quantity</td>
+                <td class="quantity">
+                    <input name="quantity" type="number" min="1" value="${not empty param.quantity ? param.quantity : 1}">
+                    <c:if test="${not empty error}">
+                        <div class="error">
+                                ${error}
+                        </div>
+                    </c:if>
+                </td>
+            </tr>
+        </table>
+        <button>Add to cart</button>
+    </form>
 
 </tags:master>
