@@ -91,6 +91,9 @@
       <button>Update</button>
     </p>
   </form>
+  <form action="${pageContext.servletContext.contextPath}/checkout">
+    <button>Checkout</button>
+  </form>
   <form id="deleteCartItem" method="post">
 
   </form>

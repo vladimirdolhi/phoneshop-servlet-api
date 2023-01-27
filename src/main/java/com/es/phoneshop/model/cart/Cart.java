@@ -3,17 +3,21 @@ package com.es.phoneshop.model.cart;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 public class Cart implements Serializable {
     private List<CartItem> items;
 
     public Cart() {
+        this.currency = Currency.getInstance("USD");
         this.items = new ArrayList<>();
     }
 
     private int totalQuantity;
     private BigDecimal totalCost;
+
+    private Currency currency;
 
     public int getTotalQuantity() {
         return totalQuantity;
@@ -33,6 +37,18 @@ public class Cart implements Serializable {
 
     public List<CartItem> getItems() {
         return items;
+    }
+
+    public void setItems(List<CartItem> items) {
+        this.items = items;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 
     @Override
