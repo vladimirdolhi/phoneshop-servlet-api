@@ -56,35 +56,14 @@ public class CheckoutPageServlet extends HttpServlet {
 
         if(errors.isEmpty()){
             orderService.placeOrder(order);
-            response.sendRedirect(request.getContextPath() + "/overview/" + order.getId());
+            cartService.clearCart(cart);
+            response.sendRedirect(request.getContextPath() + "/order/overview/" + order.getSecureId());
         } else {
             request.setAttribute("errors", errors);
             request.setAttribute("order", order);
             request.setAttribute("paymentMethods", orderService.getPaymentMethods());
             request.getRequestDispatcher(CHECKOUT_JSP).forward(request, response);
         }
-    }
-
-    private long parseProductId(HttpServletRequest request){
-        return Long.valueOf(request.getPathInfo().substring(1));
-    }
-
-    private int getQuantity(String quantityString, HttpServletRequest request) throws ParseException {
-        NumberFormat numberFormat = NumberFormat.getInstance(request.getLocale());
-        return numberFormat.parse(quantityString).intValue();
-    }
-
-    private void handleError(Map<Long, String> errors, Long productId, Exception e){
-        if(e.getClass().equals(ParseException.class)){
-            errors.put(productId, "Not a number");
-        } else {
-            if (((OutOfStockException) e).getStockRequested() <= 0){
-                errors.put(productId, "Quantity can't be negative or zero");
-            } else {
-                errors.put(productId, "Out of stock, max available " + ((OutOfStockException) e).getStockAvailable());
-            }
-        }
-
     }
 
     private void setRequiredParameter(HttpServletRequest request, String parameter,

@@ -107,9 +107,25 @@ public class DefaultCartService implements CartService{
 
     @Override
     public void delete(Cart cart, Long productId) {
-        cart.getItems().removeIf(item ->
-                productId.equals(item.getProduct().getId()));
-        recalculateCart(cart);
+        writeLock.lock();
+        try {
+            cart.getItems().removeIf(item ->
+                    productId.equals(item.getProduct().getId()));
+            recalculateCart(cart);
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    @Override
+    public void clearCart(Cart cart) {
+        writeLock.lock();
+        try {
+            cart.getItems().clear();
+            recalculateCart(cart);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     private void recalculateCart(Cart cart){
