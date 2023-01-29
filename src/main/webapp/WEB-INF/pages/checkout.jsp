@@ -113,7 +113,8 @@
         <select name="paymentMethod">
           <option></option>
           <c:forEach var="paymentMethod" items="${paymentMethods}">
-            <option>${paymentMethod}</option>
+            <option value="${paymentMethod}" ${param.paymentMethod eq paymentMethod ? 'selected' : '' }>
+                ${paymentMethod}</option>
           </c:forEach>
         </select>
         <c:set var="error" value="${errors['paymentMethod']}"/>
