@@ -7,8 +7,6 @@ import java.time.LocalDate;
 
 public class Order extends Cart {
 
-    private Long id;
-
     private String secureId;
 
     private BigDecimal subtotal;
@@ -84,13 +82,6 @@ public class Order extends Cart {
         this.paymentMethod = paymentMethod;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getSecureId() {
         return secureId;

@@ -4,7 +4,7 @@ import com.es.phoneshop.exception.OrderNotFoundException;
 
 
 public interface OrderDao {
-    Order getOrder(Long id) throws OrderNotFoundException;
+    Order getById(Long id) throws OrderNotFoundException;
     Order getOrderBySecureId(String secureId) throws OrderNotFoundException;
     void save(Order order) throws OrderNotFoundException;
 }

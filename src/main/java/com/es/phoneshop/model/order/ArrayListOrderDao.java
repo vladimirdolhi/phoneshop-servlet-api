@@ -1,18 +1,14 @@
 package com.es.phoneshop.model.order;
 
+import com.es.phoneshop.exception.DaoNotFoundException;
 import com.es.phoneshop.exception.OrderNotFoundException;
 import com.es.phoneshop.exception.ProductDaoException;
-import com.es.phoneshop.exception.ProductNotFoundException;
+import com.es.phoneshop.model.dao.GenericArrayListDao;
 
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-
-public class ArrayListOrderDao implements OrderDao {
+public class ArrayListOrderDao extends GenericArrayListDao<Order> implements OrderDao {
 
     private static OrderDao orderDao;
 
@@ -28,69 +24,47 @@ public class ArrayListOrderDao implements OrderDao {
         }
         return localProductDaoInstance;
     }
-    private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-    private Lock readLock = readWriteLock.readLock();
-    private Lock writeLock = readWriteLock.writeLock();
-
-    private long maxId = 0;
-
-    private List<Order> orders;
 
     private ArrayListOrderDao() {
-        this.orders = new ArrayList<>();
+
     }
 
     @Override
-    public Order getOrder(Long id) throws OrderNotFoundException {
-        readLock.lock();
+    public Order getById(Long id) throws OrderNotFoundException {
+        getLock().readLock().lock();
         try {
-            return orders.stream()
-                    .filter(p -> id.equals(p.getId()))
-                    .findAny()
-                    .orElseThrow(() -> new OrderNotFoundException(id, "Order with id " + id + " not found"));
+            return super.get(id);
+        } catch (DaoNotFoundException e) {
+            throw new OrderNotFoundException(e);
         } finally {
-            readLock.unlock();
+            getLock().readLock().unlock();
         }
-
     }
 
     @Override
     public Order getOrderBySecureId(String secureId) throws OrderNotFoundException {
-        readLock.lock();
+        getLock().readLock().lock();
         try {
-            return orders.stream()
+            return getOrders().stream()
                     .filter(p -> secureId.equals(p.getSecureId()))
                     .findAny()
                     .orElseThrow(() -> new OrderNotFoundException("Order with id " + secureId + " not found"));
         } finally {
-            readLock.unlock();
+            getLock().readLock().unlock();
         }
     }
 
     @Override
     public void save(Order order) throws ProductDaoException {
-        writeLock.lock();
         try {
-            if (order.getId() == null){
-                order.setId(++maxId);
-                orders.add(order);
-            } else {
-                try {
-                    Order productToUpdate = getOrder(order.getId());
-                    orders.set(orders.indexOf(productToUpdate), order);
-                } catch (ProductNotFoundException e){
-                    throw new ProductDaoException("Order with id " + order.getId() + " doesn't exists");
-                }
-            }
-
-        } finally {
-            writeLock.unlock();
+            super.save(order);
+        } catch (DaoNotFoundException e){
+            throw new ProductDaoException("Order with id " + order.getId() + " doesn't exists");
         }
-
     }
 
     public List<Order> getOrders() {
-        return orders;
+        return super.getItems();
     }
 
 }
