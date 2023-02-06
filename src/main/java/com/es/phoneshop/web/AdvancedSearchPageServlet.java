@@ -25,10 +25,13 @@ public class AdvancedSearchPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        Map<String, String> errors = new HashMap<>();
+
         String description = request.getParameter("description");
         String searchOption = request.getParameter("searchOption");
 
-        Map<String, String> errors = new HashMap<>();
+        request.setAttribute("searchOptions", SearchOption.getSearchOptions());
+
         BigDecimal minPrice = parsePriceFromRequest(request, "minPrice", errors);
         BigDecimal maxPrice = parsePriceFromRequest(request, "maxPrice", errors);
 

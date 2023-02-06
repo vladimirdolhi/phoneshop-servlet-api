@@ -93,8 +93,7 @@ public class ArrayListProductDao extends GenericArrayListDao<Product> implements
     private List<Product> findProductsByQueryAllMatch(String query, List<Product> products) {
         String[] queryParts = query.split(" ");
         return products.stream()
-                .filter(product -> Arrays.stream(queryParts).allMatch(p ->
-                        product.getDescription().contains(p)))
+                .filter(product -> Arrays.stream(product.getDescription().split(" ")).allMatch(query::contains))
                 .sorted(Comparator.comparing(p -> findMatchCount(p, queryParts), Comparator.reverseOrder()))
                 .collect(Collectors.toList());
     }

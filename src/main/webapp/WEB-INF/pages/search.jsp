@@ -7,41 +7,47 @@
   <h2>
     Advanced search
   </h2>
-  <%--<c:if test="${not empty param.message && empty param.errors}">
+  <c:if test="${not empty requestScope.message && empty requestScope.errors}">
     <div class="success">
-        ${param.message}
+        ${requestScope.message}
     </div>
   </c:if>
-  <c:if test="${not empty param.errors}">
+  <c:if test="${not empty requestScope.errors}">
     <div class="error">
-      There was an error adding to cart: ${param.errors}
+      There was an error searching: ${param.errors}
     </div>
-  </c:if>--%>
+  </c:if>
   <form action="${pageContext.servletContext.contextPath}/search">
     <label>
-      <input name="description" value="${param.query}">
-      <%--<select name="searchOption">
-        <option></option>
-        <c:forEach var="searchOption" items="${searchOptions}">
-          <option value="${searchOption}" ${param.searchOption eq searchOption ? 'selected' : '' }>
-              ${searchOption}</option>
-        </c:forEach>
-      </select>--%>
+      <input name="description" value="${param.description}">
 
       <select name="searchOption">
-        <option name="ALL_WORDS">ALL_WORDS</option>
-        <option name="ANY_WORDS">ANY_WORDS</option>
+        <c:forEach var="searchOption" items="${searchOptions}">
+          <option name="${searchOption}"} ${param.searchOption eq searchOption ? 'selected' : '' }> ${searchOption}</option>
+        </c:forEach>
       </select>
     </label>
     <br>
 
     <label>
-      Min price: <input type="text" name="minPrice" value="${param.minPrice}">
+      <c:set var="error" value="${errors['minPrice']}"/>
+      Min price: <input type="text" name="minPrice" value="${param['minPrice']}">
+      <c:if test="${not empty error}">
+        <div class="error">
+            ${error}
+        </div>
+      </c:if>
     </label>
 
     <br>
     <label>
-      Max price: <input type="text" name="maxPrice" value="${param.maxPrice}">
+      <c:set var="error" value="${errors['maxPrice']}"/>
+      Max price: <input type="text" name="maxPrice" value="${param['maxPrice']}">
+      <c:if test="${not empty error}">
+        <div class="error">
+            ${error}
+        </div>
+      </c:if>
     </label>
 
     <button>Search</button>
