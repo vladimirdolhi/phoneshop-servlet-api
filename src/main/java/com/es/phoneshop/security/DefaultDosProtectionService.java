@@ -1,8 +1,5 @@
 package com.es.phoneshop.security;
 
-import com.es.phoneshop.model.product.viewedHistory.DefaultViewedProductsService;
-import com.es.phoneshop.model.product.viewedHistory.ViewedProductsService;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -25,7 +25,6 @@ public class OrderOverviewPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String secureOrderId = request.getPathInfo().substring(1);
         request.setAttribute("order", orderDao.getOrderBySecureId(secureOrderId));
-        request.setAttribute("paymentMethods", orderService.getPaymentMethods());
         request.getRequestDispatcher(ORDER_OVERVIEW_JSP).forward(request, response);
     }
 

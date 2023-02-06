@@ -2,7 +2,6 @@ package com.es.phoneshop.model.order;
 
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartItem;
-import com.es.phoneshop.model.cart.DefaultCartService;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
