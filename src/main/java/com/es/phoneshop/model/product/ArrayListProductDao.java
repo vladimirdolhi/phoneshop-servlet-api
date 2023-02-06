@@ -5,6 +5,7 @@ import com.es.phoneshop.exception.ProductDaoException;
 import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.dao.GenericArrayListDao;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,10 +58,42 @@ public class ArrayListProductDao extends GenericArrayListDao<Product> implements
 
     }
 
+    @Override
+    public List<Product> findProducts(String description, String searchOption, BigDecimal minPrice, BigDecimal maxPrice) {
+        if (description == null && searchOption == null) {
+            return new ArrayList<>();
+        }
+        List<Product> availableProducts = getItems().stream()
+                .filter(product -> product.getPrice() != null)
+                .filter(product -> product.getStock() > 0)
+                .collect(Collectors.toList());
+
+        if (searchOption == null || SearchOption.valueOf(searchOption) == SearchOption.ANY_WORDS) {
+            return findProductsByQuery(description, availableProducts).stream()
+                    .filter(product -> product.getPrice().compareTo(minPrice) >= 0)
+                    .filter(product -> product.getPrice().compareTo(maxPrice) <= 0)
+                    .collect(Collectors.toList());
+        } else {
+            return findProductsByQueryAllMatch(description , availableProducts).stream()
+                    .filter(product -> product.getPrice().compareTo(minPrice) >= 0)
+                    .filter(product -> product.getPrice().compareTo(maxPrice) <= 0)
+                    .collect(Collectors.toList());
+        }
+    }
+
     private List<Product> findProductsByQuery(String query, List<Product> products) {
         String[] queryParts = query.split(" ");
         return products.stream()
                 .filter(product -> Arrays.stream(queryParts).anyMatch(p ->
+                        product.getDescription().contains(p)))
+                .sorted(Comparator.comparing(p -> findMatchCount(p, queryParts), Comparator.reverseOrder()))
+                .collect(Collectors.toList());
+    }
+
+    private List<Product> findProductsByQueryAllMatch(String query, List<Product> products) {
+        String[] queryParts = query.split(" ");
+        return products.stream()
+                .filter(product -> Arrays.stream(queryParts).allMatch(p ->
                         product.getDescription().contains(p)))
                 .sorted(Comparator.comparing(p -> findMatchCount(p, queryParts), Comparator.reverseOrder()))
                 .collect(Collectors.toList());
@@ -127,5 +160,7 @@ public class ArrayListProductDao extends GenericArrayListDao<Product> implements
     public List<Product> getProducts() {
         return super.getItems();
     }
+
+
 
 }
