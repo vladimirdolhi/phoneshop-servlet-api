@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,6 @@ import java.util.Locale;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,8 +35,7 @@ public class AddItemToCartServletTest {
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
-    @Mock
-    private RequestDispatcher requestDispatcher;
+
     @Mock
     private HttpSession session;
 
@@ -67,7 +64,7 @@ public class AddItemToCartServletTest {
         cartService.add(cart, product.getId(), 1);
         when(request.getParameterValues("productId")).thenReturn(new String[]{product.getId().toString()});
         when(request.getSession().getAttribute(any())).thenReturn(cart);
-        when(request.getPathInfo()).thenReturn("/25");
+        when(request.getPathInfo()).thenReturn("/2");
         servlet.doPost(request, response);
         assertEquals(11, cart.getItems().get(0).getQuantity());
         verify(response).sendRedirect(request.getContextPath() + "/products?message=Product added successfully");
@@ -84,9 +81,9 @@ public class AddItemToCartServletTest {
         cartService.add(cart, product.getId(), 10);
         when(request.getParameterValues("productId")).thenReturn(new String[]{product.getId().toString()});
         when(request.getSession().getAttribute(any())).thenReturn(cart);
-        when(request.getPathInfo()).thenReturn("/24");
+        when(request.getPathInfo()).thenReturn("/1");
         servlet.doPost(request, response);
         assertEquals(10, cart.getItems().get(0).getQuantity());
-        verify(response).sendRedirect(request.getContextPath() + "/products?errors=Out of stock, max available 100&id=24");
+        verify(response).sendRedirect(request.getContextPath() + "/products?errors=Out of stock, max available 100&id=1");
     }
 }

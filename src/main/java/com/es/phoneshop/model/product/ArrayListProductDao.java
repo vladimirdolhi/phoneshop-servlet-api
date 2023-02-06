@@ -1,15 +1,14 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.exception.DaoNotFoundException;
 import com.es.phoneshop.exception.ProductDaoException;
 import com.es.phoneshop.exception.ProductNotFoundException;
+import com.es.phoneshop.model.dao.GenericArrayListDao;
 
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-public class ArrayListProductDao implements ProductDao {
+public class ArrayListProductDao extends GenericArrayListDao<Product> implements ProductDao {
 
     private static ProductDao productDao;
 
@@ -25,38 +24,25 @@ public class ArrayListProductDao implements ProductDao {
         }
         return localProductDaoInstance;
     }
-    private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-    private Lock readLock = readWriteLock.readLock();
-    private Lock writeLock = readWriteLock.writeLock();
-
-    private long maxId = 0;
-
-    private List<Product> products;
 
     private ArrayListProductDao() {
-        this.products = new ArrayList<>();
     }
 
     @Override
-    public Product getProduct(Long id) throws ProductNotFoundException {
-        readLock.lock();
+    public Product getById(Long id) throws ProductNotFoundException {
         try {
-            return products.stream()
-                    .filter(p -> id.equals(p.getId()))
-                    .findAny()
-                    .orElseThrow(() -> new ProductNotFoundException(id, "Product with id " + id + " not found"));
-        } finally {
-            readLock.unlock();
+            return super.get(id);
+        } catch (DaoNotFoundException e) {
+            throw new ProductNotFoundException(id, "Product with id " + id + " not found");
         }
-
     }
 
     @Override
     public List<Product> findProducts(String query, SortField sortField, SortOrder sortOrder) {
-        readLock.lock();
+        getLock().readLock().lock();
 
         try {
-            List<Product> availableProducts = products.stream()
+            List<Product> availableProducts = getItems().stream()
                     .filter(product -> product.getPrice() != null)
                     .filter(product -> product.getStock() > 0)
                     .collect(Collectors.toList());
@@ -66,7 +52,7 @@ public class ArrayListProductDao implements ProductDao {
             return sortProductList(availableProducts, sortField, sortOrder);
 
         } finally {
-            readLock.unlock();
+            getLock().readLock().unlock();
         }
 
     }
@@ -122,42 +108,24 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public void save(Product product) throws ProductDaoException {
-        writeLock.lock();
         try {
-            if (product.getId() == null){
-                product.setId(++maxId);
-                products.add(product);
-            } else {
-                try {
-                    Product productToUpdate = getProduct(product.getId());
-                    products.set(products.indexOf(productToUpdate), product);
-                } catch (ProductNotFoundException e){
-                    throw new ProductDaoException("Product with id " + product.getId() + " doesn't exists");
-                }
-            }
-
-        } finally {
-            writeLock.unlock();
+            super.save(product);
+        } catch (DaoNotFoundException e){
+            throw new ProductNotFoundException("Product with id " + product.getId() + " doesn't exists");
         }
-
     }
 
     @Override
     public void delete(Long id) throws ProductDaoException {
-        writeLock.lock();
         try {
-            products.stream()
-                    .filter(product -> product.getId().equals(id))
-                    .findFirst()
-                    .map(product -> products.remove(product))
-                    .orElseThrow(() -> new ProductDaoException("Product with id " + id + " not found"));
-        } finally {
-            writeLock.unlock();
+            super.delete(id);
+        } catch (DaoNotFoundException e){
+            throw new ProductNotFoundException("Product with id " + id + " not found");
         }
     }
 
     public List<Product> getProducts() {
-        return products;
+        return super.getItems();
     }
 
 }

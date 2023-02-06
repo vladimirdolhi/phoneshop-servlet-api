@@ -1,5 +1,7 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.model.dao.Entity;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -7,8 +9,7 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Objects;
 
-public class Product implements Serializable {
-    private Long id;
+public class Product extends Entity implements Serializable {
     private String code;
     private String description;
     /** null means there is no price because the product is outdated or new */
@@ -23,11 +24,9 @@ public class Product implements Serializable {
     {
         priceHistoryList = new ArrayList<>();
     }
-    public Product() {
-    }
 
     public Product(Long id, String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
-        this.id = id;
+        super(id);
         this.code = code;
         this.description = description;
         this.price = price;
@@ -37,6 +36,7 @@ public class Product implements Serializable {
     }
 
     public Product(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl, List<PriceHistory> priceHistoryList) {
+        super(null);
         this.code = code;
         this.description = description;
         this.price = price;
@@ -47,20 +47,13 @@ public class Product implements Serializable {
     }
 
     public Product(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
+        super(null);
         this.code = code;
         this.description = description;
         this.price = price;
         this.currency = currency;
         this.stock = stock;
         this.imageUrl = imageUrl;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCode() {
@@ -135,7 +128,7 @@ public class Product implements Serializable {
     @Override
     public String toString() {
         return "Product{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", code='" + code + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +

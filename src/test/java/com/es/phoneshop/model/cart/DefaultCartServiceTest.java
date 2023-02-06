@@ -45,7 +45,6 @@ public class DefaultCartServiceTest {
         productDao.save(product2);
         productDao.save(product3);
         productDao.save(product4);
-
         cart.getItems().add(new CartItem(product1, 3));
         cart.getItems().add(new CartItem(product2, 5));
         cart.getItems().add(new CartItem(product3, 8));
@@ -84,7 +83,7 @@ public class DefaultCartServiceTest {
 
     @Test(expected = OutOfStockException.class)
     public void testUpdateCartItemWithOutOfStockQuantity() throws OutOfStockException {
-        cartService.update(cart, 1L, 1000);
+        cartService.update(cart, 3L, 1000);
     }
 
     @Test

@@ -1,12 +1,8 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
-import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -14,10 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class DeleteCartItemServlet extends HttpServlet {
     private CartService cartService;

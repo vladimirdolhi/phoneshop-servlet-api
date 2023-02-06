@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
 
 public class DefaultCartService implements CartService{
 
@@ -59,7 +58,7 @@ public class DefaultCartService implements CartService{
     public void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
         writeLock.lock();
         try {
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.getById(productId);
 
             Optional<CartItem> cartItemOptional = findCartItemForUpdate(cart, productId, quantity);
 
@@ -86,7 +85,7 @@ public class DefaultCartService implements CartService{
     public void update(Cart cart, Long productId, int quantity) throws OutOfStockException {
         writeLock.lock();
         try {
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.getById(productId);
             Optional<CartItem> cartItemOptional = findCartItemForUpdate(cart, productId, quantity);
 
             if(product.getStock() < quantity){
@@ -107,16 +106,32 @@ public class DefaultCartService implements CartService{
 
     @Override
     public void delete(Cart cart, Long productId) {
-        cart.getItems().removeIf(item ->
-                productId.equals(item.getProduct().getId()));
-        recalculateCart(cart);
+        writeLock.lock();
+        try {
+            cart.getItems().removeIf(item ->
+                    productId.equals(item.getProduct().getId()));
+            recalculateCart(cart);
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    @Override
+    public void clearCart(Cart cart) {
+        writeLock.lock();
+        try {
+            cart.getItems().clear();
+            recalculateCart(cart);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     private void recalculateCart(Cart cart){
         cart.setTotalQuantity(cart.getItems().stream()
                 .map(CartItem::getQuantity).mapToInt(q -> q).sum());
         cart.setTotalCost(BigDecimal.valueOf(cart.getItems().stream()
-                .mapToInt(item -> item.getQuantity() * item.getProduct().getPrice().intValueExact())
+                .mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice().doubleValue())
                 .sum()));
     }
 
@@ -124,7 +139,7 @@ public class DefaultCartService implements CartService{
         if(quantity <= 0){
             throw new OutOfStockException(quantity);
         }
-        Product product = productDao.getProduct(productId);
+        Product product = productDao.getById(productId);
         Optional<CartItem> cartItemOptional = cart.getItems().stream()
                 .filter(item -> product.getId().equals(item.getProduct().getId()))
                 .findAny();

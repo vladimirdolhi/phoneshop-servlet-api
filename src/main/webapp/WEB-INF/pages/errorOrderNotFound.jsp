@@ -3,5 +3,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
-<jsp:useBean id="cart" type="com.es.phoneshop.model.cart.Cart" scope="request"/>
-Cart: ${cart.totalQuantity} items Total price: ${cart.totalCost} ${cart.currency}
+<tags:master pageTitle="Product Details">
+  <h1>
+    Sorry, order not found
+  </h1>
+
+</tags:master>

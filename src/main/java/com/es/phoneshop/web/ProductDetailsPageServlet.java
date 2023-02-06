@@ -1,7 +1,6 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.exception.OutOfStockException;
-import com.es.phoneshop.exception.ProductDaoException;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
@@ -37,7 +36,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         long productId = parseProductId(request);
-        Product currentProduct = productDao.getProduct(productId);
+        Product currentProduct = productDao.getById(productId);
         request.setAttribute("product", currentProduct);
         request.setAttribute("cart", cartService.getCart(request));
         ViewedProductsHistory viewedProductsHistory = viewedProductsService.getViewedProducts(request);
